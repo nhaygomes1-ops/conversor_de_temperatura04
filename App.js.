@@ -1,0 +1,262 @@
+
+import React, { useState } from 'react';
+
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert
+} from 'react-native';
+
+export default function App() {
+
+  const [temperatura, setTemperatura] = useState('');
+  const [escala, setEscala] = useState('Celsius');
+  const [resultado, setResultado] = useState(null);
+
+  function converterTemperatura() {
+
+    // Verificar campo vazio
+    if (temperatura.trim() === '') {
+      Alert.alert('Atenção', 'Digite uma temperatura!');
+      setResultado(null);
+      return;
+    }
+
+    // Converter texto em número
+    const valor = Number(
+      temperatura.trim().replace(',', '.')
+    );
+
+    // Validar valor numérico
+    if (!Number.isFinite(valor)) {
+      Alert.alert(
+        'Valor inválido',
+        'Digite uma temperatura válida.'
+      );
+      setResultado(null);
+      return;
+    }
+
+    let convertido;
+
+    // Celsius para Fahrenheit
+    if (escala === 'Celsius') {
+      convertido = (valor * 9 / 5) + 32;
+
+      setResultado({
+        valor: convertido.toFixed(2),
+        unidade: '°F',
+        origem: '°C'
+      });
+
+    } else {
+
+      // Fahrenheit para Celsius
+      convertido = (valor - 32) * 5 / 9;
+
+      setResultado({
+        valor: convertido.toFixed(2),
+        unidade: '°C',
+        origem: '°F'
+      });
+    }
+  }
+
+  return (
+    <View style={styles.container}>
+
+      <Text style={styles.titulo}>
+        Conversor de Temperatura
+      </Text>
+
+      <Text style={styles.subtitulo}>
+        Converta temperaturas entre Celsius e Fahrenheit.
+      </Text>
+
+      <View style={styles.card}>
+
+        <Text style={styles.label}>
+          Digite a temperatura:
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Exemplo: 30"
+          keyboardType="decimal-pad"
+          value={temperatura}
+          onChangeText={(valor) => {
+            setTemperatura(valor);
+            setResultado(null);
+          }}
+        />
+
+        <Text style={styles.label}>
+          Selecione a escala de origem:
+        </Text>
+
+        <View style={styles.opcoes}>
+
+          <View style={styles.botaoOpcao}>
+            <Button
+              title="Celsius (°C)"
+              color={escala === 'Celsius' ? '#087E8B' : '#999999'}
+              onPress={() => {
+                setEscala('Celsius');
+                setResultado(null);
+              }}
+            />
+          </View>
+
+          <View style={styles.botaoOpcao}>
+            <Button
+              title="Fahrenheit (°F)"
+              color={escala === 'Fahrenheit' ? '#087E8B' : '#999999'}
+              onPress={() => {
+                setEscala('Fahrenheit');
+                setResultado(null);
+              }}
+            />
+          </View>
+
+        </View>
+
+        <View style={styles.botaoConverter}>
+          <Button
+            title="Converter"
+            color="#075B66"
+            onPress={converterTemperatura}
+          />
+        </View>
+
+        {resultado !== null && (
+
+          <View style={styles.resultado}>
+
+            <Text style={styles.textoResultado}>
+              Resultado da conversão:
+            </Text>
+
+            <Text style={styles.valor}>
+              {resultado.valor.replace('.', ',')} {resultado.unidade}
+            </Text>
+
+            <Text style={styles.detalhe}>
+              Escala de origem: {resultado.origem}
+            </Text>
+
+          </View>
+
+        )}
+
+      </View>
+
+      <Text style={styles.rodape}>
+        Conversão entre Celsius e Fahrenheit.
+      </Text>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    backgroundColor: '#EAF4F8',
+    justifyContent: 'center',
+    padding: 22
+  },
+
+  titulo: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#075B66',
+    textAlign: 'center',
+    marginBottom: 12
+  },
+
+  subtitulo: {
+    fontSize: 15,
+    color: '#52666A',
+    textAlign: 'center',
+    marginBottom: 25
+  },
+
+  card: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 15,
+    elevation: 4
+  },
+
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#164E56',
+    marginBottom: 10
+  },
+
+  input: {
+    backgroundColor: '#F5FAFA',
+    borderWidth: 1,
+    borderColor: '#9CCDD1',
+    borderRadius: 10,
+    padding: 14,
+    fontSize: 18,
+    marginBottom: 22,
+    color: '#164E56'
+  },
+
+  opcoes: {
+    gap: 12,
+    marginBottom: 20
+  },
+
+  botaoOpcao: {
+    borderRadius: 8,
+    overflow: 'hidden'
+  },
+
+  botaoConverter: {
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginTop: 5
+  },
+
+  resultado: {
+    backgroundColor: '#EAF7F8',
+    padding: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 25
+  },
+
+  textoResultado: {
+    fontSize: 15,
+    color: '#52666A'
+  },
+
+  valor: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#087E8B',
+    marginTop: 12
+  },
+
+  detalhe: {
+    fontSize: 14,
+    color: '#52666A',
+    marginTop: 8
+  },
+
+  rodape: {
+    fontSize: 12,
+    color: '#718589',
+    textAlign: 'center',
+    marginTop: 22
+  }
+
+});
